@@ -7,5 +7,11 @@
     <string name="title_activity_to_do_archive">ToDoArchive</string>
     <string name="add_todo_list">Add</string>
     <string name="input_todo_hint">input to do items</string>
+    <string-array name="dialog_box_string">
+        <item >Archive</item>
+        <item >Email</item>
+        <item >Delete</item>
+     	<item >Cancel</item>
+    </string-array>
 
 </resources>

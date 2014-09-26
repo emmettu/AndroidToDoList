@@ -3,14 +3,16 @@ package com.example.todolist;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -51,6 +53,43 @@ public class MainActivity extends Activity {
 				  }
 			}
 		});
+        listview.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+//				AlertDialog.Builder adb = new AlertDialog.Builder(getBaseContext());
+//				adb.setMessage("");
+				dialogBox(position);
+				return false;
+			}
+		});		
+        
+    }
+    
+    public void dialogBox(int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final int finalPosition = position;
+        builder.setTitle("What would you like to do?")
+               .setItems(R.array.dialog_box_string, new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog, int which) {
+                   // The 'which' argument contains the index position
+                   // of the selected item
+                	   if(which == 0){
+                		   Toast.makeText(getBaseContext(), "Archive", Toast.LENGTH_SHORT).show();
+                	   }
+                	   else if(which == 1){
+                		   
+                	   }
+                	   else if(which == 2){
+                		   todoArray.remove(finalPosition);
+                		   todoAdapter.notifyDataSetChanged();
+                	   }
+                	   
+               }
+        });
+        builder.show();
     }
 
 
