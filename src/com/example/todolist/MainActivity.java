@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,6 +24,7 @@ public class MainActivity extends Activity {
 	
 	private ArrayList<todoItem> todoArray = new ArrayList<todoItem>();
     private ArrayAdapter<todoItem> todoAdapter;
+    private ListView listview;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,26 +33,26 @@ public class MainActivity extends Activity {
         //initialize ArrayAdapter
         todoAdapter = new ArrayAdapter<todoItem>(getBaseContext(), android.R.layout.simple_list_item_1, todoArray);
 
-        ListView listview = (ListView) findViewById(R.id.addTodoListView);
-        listview.setAdapter(todoAdapter);
-        
+        listview = (ListView) findViewById(R.id.addTodoListView);
+        listview.setAdapter(todoAdapter);        
         listview.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view,
 					int position, long id) {
-				// TODO Auto-generated method stub
+//				// TODO Auto-generated method stub
 				todoItem todo = todoAdapter.getItem(position);
-				TextView textTodo = (TextView) view.findViewById(view.getId());
+//				TextView textTodo = (TextView) view.findViewById(view.getId());
 				todo.setStatus(!todo.isDone());
-				
-				if(todo.isDone()){
-				      textTodo.setPaintFlags(textTodo.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-				      Toast.makeText(getBaseContext(), "Nice job!", Toast.LENGTH_SHORT).show();
-				}
-				else{
-				      textTodo.setPaintFlags(textTodo.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-				  }
+//				
+//				if(todo.isDone()){
+//				      textTodo.setPaintFlags(textTodo.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+//				      Toast.makeText(getBaseContext(), "Nice job!", Toast.LENGTH_SHORT).show();
+//				}
+//				else{
+//				      textTodo.setPaintFlags(textTodo.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+//				}
+				updateCrossOuts();
 			}
 		});
         listview.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -77,7 +79,7 @@ public class MainActivity extends Activity {
                    // The 'which' argument contains the index position
                    // of the selected item
                 	   if(which == 0){
-                		   Toast.makeText(getBaseContext(), "Archive", Toast.LENGTH_SHORT).show();
+                		   //Toast.makeText(getBaseContext(), "Archive", Toast.LENGTH_SHORT).show();
                 	   }
                 	   else if(which == 1){
                 		   
@@ -85,11 +87,41 @@ public class MainActivity extends Activity {
                 	   else if(which == 2){
                 		   todoArray.remove(finalPosition);
                 		   todoAdapter.notifyDataSetChanged();
+                		   updateCrossOuts();
                 	   }
                 	   
                }
         });
         builder.show();
+    }
+    
+    public void updateCrossOuts() {
+    	//View view;
+    	TextView textView;
+    	if(listview.getCount() == 1) {
+    		return;
+    	}
+    	
+    	for(int i = 0; i < listview.getCount(); i++) {
+    		textView = (TextView) listview.getChildAt(i);
+    		todoItem todo = todoAdapter.getItem(i);
+    		
+    		if(textView == null) {
+    			return;
+    		}
+    		
+    		if(todo.isDone()) {
+			      textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+			      //textView.setText("Update!");
+			      Toast.makeText(getBaseContext(), todo.toString()+" is done!", Toast.LENGTH_SHORT).show();
+			}
+			else {
+			      textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+			      //textView.setText("Updated");
+			      Toast.makeText(getBaseContext(),  todo.toString()+" not done", Toast.LENGTH_SHORT).show();
+
+			  }
+    	}
     }
 
 
@@ -112,6 +144,11 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
     
+    public void todoArchive(MenuItem menu) {
+		Intent intent = new Intent(MainActivity.this, ToDoArchive.class);
+		startActivity(intent);
+	}
+    
     public void addToDo(View view) {
     	TextView textview = (TextView) findViewById(R.id.addTodoText);
     	String TodoText = textview.getText().toString();
@@ -124,5 +161,6 @@ public class MainActivity extends Activity {
     	textview.setText("");
     	todoArray.add(todo);
     	todoAdapter.notifyDataSetChanged();
+    	updateCrossOuts();
     }
 }

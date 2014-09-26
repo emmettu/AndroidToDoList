@@ -7,6 +7,8 @@
     <string name="title_activity_to_do_archive">ToDoArchive</string>
     <string name="add_todo_list">Add</string>
     <string name="input_todo_hint">input to do items</string>
+    <string name="archive_menu">Archive</string>
+    
     <string-array name="dialog_box_string">
         <item >Archive</item>
         <item >Email</item>
