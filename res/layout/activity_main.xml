@@ -29,13 +29,12 @@
         android:onClick="addToDo"
         android:text="@string/add_todo_list" />
 
-    <ExpandableListView
+    <ListView
         android:id="@+id/addTodoListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/addTodoButton"
         android:layout_below="@+id/addTodoText" >
 
-    </ExpandableListView>
+    </ListView>
 
 </RelativeLayout>
