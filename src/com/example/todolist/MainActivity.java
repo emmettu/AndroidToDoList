@@ -70,11 +70,22 @@ public class MainActivity extends Activity {
 				
 				if(todo.isDone()){
 				      textTodo.setPaintFlags(textTodo.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-				      //Toast.makeText(getBaseContext(), "Nice job!", Toast.LENGTH_SHORT).show();
+				     
 				}
 				else{
 				      textTodo.setPaintFlags(textTodo.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
 				}
+				int i, d, u = 0;
+				for(i = u = d = 0; i < todoArray.size(); i++) {
+					if(todoArray.get(i).isDone()) {
+						d++;
+					}
+					else {
+						u++;
+					}
+			      }
+				Toast.makeText(getBaseContext(), d+" done "+ u + " undone", Toast.LENGTH_SHORT).show();
+
 				saveInFile(MAINFILENAME, todoArray);
 			}
 		});
