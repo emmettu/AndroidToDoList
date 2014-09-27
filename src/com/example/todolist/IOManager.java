@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,13 +15,14 @@ import android.util.Base64;
 public class IOManager {
 	static final String mainFile = "main";
 	static final String ArchiveFile = "archive";
-	static final String slKey = "studentList"; 
+	static final String mKey = "studentList";
+	static final String aKey = "ArchiveList";
 	
 	Context context;
 	
-	static private IOManager IOManager = null;
+	private IOManager IOManager = null;
 	
-	public static void initManager(Context context) {
+	public void initManager(Context context) {
 		if (IOManager == null) {
 			if (context==null) {
 				throw new RuntimeException("missing context for IOManager");
@@ -29,7 +31,7 @@ public class IOManager {
 		}		
 	}
 	
-	public static IOManager getManager() {
+	public IOManager getManager() {
 		if (IOManager==null) {
 			throw new RuntimeException("Did not initialize Manager");
 		}
@@ -41,33 +43,33 @@ public class IOManager {
 		this.context = context;
 	}
 
-//	public StudentList loadStudentList() throws ClassNotFoundException, IOException {
-//		SharedPreferences settings = context.getSharedPreferences(mainFile, Context.MODE_PRIVATE);
-//		String studentListData = settings.getString(slKey, "");
-//		if (studentListData.equals("")) {
-//			return new StudentList();
-//		} else {
-//			return studentListFromString(studentListData);
-//		}
-//	}
-//	static public StudentList studentListFromString(String studentListData) throws ClassNotFoundException, IOException {
-//		ByteArrayInputStream bi = new ByteArrayInputStream(Base64.decode(studentListData, Base64.DEFAULT));
-//		ObjectInputStream oi = new ObjectInputStream(bi);
-//		return (StudentList)oi.readObject();	
-//	}
-//	static public String studentListToString(StudentList sl) throws IOException {
-//		ByteArrayOutputStream bo = new ByteArrayOutputStream();
-//		ObjectOutputStream oo = new ObjectOutputStream(bo);
-//		oo.writeObject(sl);
-//		oo.close();
-//		byte bytes[] = bo.toByteArray();
-//		return Base64.encodeToString(bytes,Base64.DEFAULT);
-//	}
-//	
-//	public void saveStudentList(StudentList sl) throws IOException {
-//		SharedPreferences settings = context.getSharedPreferences(mainFile, Context.MODE_PRIVATE);
-//		Editor editor = settings.edit();
-//		editor.putString(slKey, studentListToString(sl));
-//		editor.commit();
-//	}
+	public ArrayList<todoItem> loadArray() throws ClassNotFoundException, IOException {
+		SharedPreferences settings = context.getSharedPreferences(mainFile, Context.MODE_PRIVATE);
+		String ArrayData = settings.getString(aKey, "");
+		if (ArrayData.equals("")) {
+			return new ArrayList<todoItem>();
+		} else {
+			return ArrayListFromString(ArrayData);
+		}
+	}
+	static public ArrayList<todoItem> ArrayListFromString(String ArrayData) throws ClassNotFoundException, IOException {
+		ByteArrayInputStream bi = new ByteArrayInputStream(Base64.decode(ArrayData, Base64.DEFAULT));
+		ObjectInputStream oi = new ObjectInputStream(bi);
+		return (ArrayList<todoItem>) oi.readObject();	
+	}
+	static public String ArrayListToString(ArrayList<todoItem> al) throws IOException {
+		ByteArrayOutputStream bo = new ByteArrayOutputStream();
+		ObjectOutputStream oo = new ObjectOutputStream(bo);
+		oo.writeObject(al);
+		oo.close();
+		byte bytes[] = bo.toByteArray();
+		return Base64.encodeToString(bytes,Base64.DEFAULT);
+	}
+	
+	public void saveArrayList(ArrayList<todoItem> al) throws IOException {
+		SharedPreferences settings = context.getSharedPreferences(mainFile, Context.MODE_PRIVATE);
+		Editor editor = settings.edit();
+		editor.putString(mKey, ArrayListToString(al));
+		editor.commit();
+	}
 }

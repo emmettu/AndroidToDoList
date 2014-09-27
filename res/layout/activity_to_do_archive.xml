@@ -8,13 +8,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.todolist.ToDoArchive" >
 
-    <ExpandableListView
+    <ListView
         android:id="@+id/archiveListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" >
 
-    </ExpandableListView>
+    </ListView>
 
 </RelativeLayout>

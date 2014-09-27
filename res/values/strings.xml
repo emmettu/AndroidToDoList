@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">toDoList</string>
+    <string name="app_name">eunderhi-toDoList</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_to_do_archive">ToDoArchive</string>
+    <string name="title_activity_to_do_archive">eunderhi-ToDoArchive</string>
     <string name="add_todo_list">Add</string>
     <string name="input_todo_hint">input to do items</string>
     <string name="archive_menu">Archive</string>

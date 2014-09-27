@@ -1,7 +1,14 @@
 package com.example.todolist;
 
-public class todoItem {
+import java.io.Serializable;
+
+public class todoItem implements Serializable {
 	
+	/**
+	 * Serialized
+	 */
+	private static final long serialVersionUID = 3004098601522293129L;
+
 	private String name;
 	
 	private boolean status = false;

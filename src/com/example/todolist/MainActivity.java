@@ -1,6 +1,17 @@
 package com.example.todolist;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,17 +33,28 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
-	private ArrayList<todoItem> todoArray = new ArrayList<todoItem>();
+	static public ArrayList<todoItem> todoArray = new ArrayList<todoItem>();
     private ArrayAdapter<todoItem> todoAdapter;
     private ListView listview;
+    public ArrayList<todoItem> archiveArray = new ArrayList<todoItem>();
+    private static final String MAINFILENAME = "mainfile.sav";
+    private static final String ARCHIVEFILENAME = "archivefile.sav";
+    
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+		loadFromFile(MAINFILENAME, todoArray);
+			
+		Toast.makeText(getBaseContext(), ""+                		   //Toast.makeText(getBaseContext(), "Archive", Toast.LENGTH_SHORT).show();
+todoArray.size(), Toast.LENGTH_SHORT).show();
+		
         //initialize ArrayAdapter
         todoAdapter = new ArrayAdapter<todoItem>(getBaseContext(), android.R.layout.simple_list_item_1, todoArray);
-
+        todoAdapter.notifyDataSetChanged();
+        
         listview = (ListView) findViewById(R.id.addTodoListView);
         listview.setAdapter(todoAdapter);        
         listview.setOnItemClickListener(new OnItemClickListener() {
@@ -42,17 +64,17 @@ public class MainActivity extends Activity {
 					int position, long id) {
 //				// TODO Auto-generated method stub
 				todoItem todo = todoAdapter.getItem(position);
-//				TextView textTodo = (TextView) view.findViewById(view.getId());
+				TextView textTodo = (TextView) view.findViewById(view.getId());
 				todo.setStatus(!todo.isDone());
-//				
-//				if(todo.isDone()){
-//				      textTodo.setPaintFlags(textTodo.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-//				      Toast.makeText(getBaseContext(), "Nice job!", Toast.LENGTH_SHORT).show();
-//				}
-//				else{
-//				      textTodo.setPaintFlags(textTodo.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-//				}
-				updateCrossOuts();
+				
+				if(todo.isDone()){
+				      textTodo.setPaintFlags(textTodo.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+				      //Toast.makeText(getBaseContext(), "Nice job!", Toast.LENGTH_SHORT).show();
+				}
+				else{
+				      textTodo.setPaintFlags(textTodo.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+				}
+				saveInFile(MAINFILENAME, todoArray);
 			}
 		});
         listview.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -80,6 +102,7 @@ public class MainActivity extends Activity {
                    // of the selected item
                 	   if(which == 0){
                 		   //Toast.makeText(getBaseContext(), "Archive", Toast.LENGTH_SHORT).show();
+                		   saveInFile(ARCHIVEFILENAME, archiveArray);
                 	   }
                 	   else if(which == 1){
                 		   
@@ -88,7 +111,8 @@ public class MainActivity extends Activity {
                 		   todoArray.remove(finalPosition);
                 		   todoAdapter.notifyDataSetChanged();
                 		   updateCrossOuts();
-                	   }
+                		   saveInFile(MAINFILENAME, ToDoArchive.archiveArray);
+						}
                 	   
                }
         });
@@ -113,12 +137,12 @@ public class MainActivity extends Activity {
     		if(todo.isDone()) {
 			      textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 			      //textView.setText("Update!");
-			      Toast.makeText(getBaseContext(), todo.toString()+" is done!", Toast.LENGTH_SHORT).show();
+			      //Toast.makeText(getBaseContext(), todo.toString()+" is done!", Toast.LENGTH_SHORT).show();
 			}
 			else {
 			      textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
 			      //textView.setText("Updated");
-			      Toast.makeText(getBaseContext(),  todo.toString()+" not done", Toast.LENGTH_SHORT).show();
+			      //Toast.makeText(getBaseContext(),  todo.toString()+" not done", Toast.LENGTH_SHORT).show();
 
 			  }
     	}
@@ -149,7 +173,7 @@ public class MainActivity extends Activity {
 		startActivity(intent);
 	}
     
-    public void addToDo(View view) {
+    public void addToDo(View view) throws IOException {
     	TextView textview = (TextView) findViewById(R.id.addTodoText);
     	String TodoText = textview.getText().toString();
     	if(TodoText.equals("")) {
@@ -162,5 +186,43 @@ public class MainActivity extends Activity {
     	todoArray.add(todo);
     	todoAdapter.notifyDataSetChanged();
     	updateCrossOuts();
+    	saveInFile(MAINFILENAME, todoArray);
+    }
+
+
+    public void loadFromFile(String FILENAME, ArrayList<todoItem> todoArray) {
+    	if(todoArray == null) {
+    		todoArray = new ArrayList<todoItem>();
+    	}
+    	try {
+    		FileInputStream fis = openFileInput(FILENAME);
+    		BufferedReader in = new BufferedReader(new InputStreamReader(fis));			
+    		//From http://www.javacreed.com/simple-gson-example/
+    		Gson gson = new Gson();
+    		Type ListType = new TypeToken<ArrayList<todoItem>>() {}.getType();
+    		todoArray = gson.fromJson(in, ListType);
+    	} catch (FileNotFoundException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
+    }
+
+    public void saveInFile(String FILENAME, ArrayList<todoItem> todoArray) {
+    	try {
+    		FileOutputStream fos = openFileOutput(FILENAME,0);
+    		Gson gson = new Gson();
+    		OutputStreamWriter osw = new OutputStreamWriter(fos);
+    		gson.toJson(todoArray, osw);
+    		osw.flush();
+			osw.close();
+    	} catch (FileNotFoundException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
     }
 }
+
+
