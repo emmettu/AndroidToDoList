@@ -18,6 +18,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +35,8 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 	
 	static public ArrayList<todoItem> todoArray = new ArrayList<todoItem>();
-    private ArrayAdapter<todoItem> todoAdapter;
+	public ArrayList<todoItem> ArchiveList = new ArrayList<todoItem>();
+	private ArrayAdapter<todoItem> todoAdapter;
     private ListView listview;
     public ArrayList<todoItem> archiveArray = new ArrayList<todoItem>();
     private static final String MAINFILENAME = "mainfile.sav";
@@ -47,9 +49,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         
 		loadFromFile(MAINFILENAME, todoArray);
+		loadFromFile(ARCHIVEFILENAME, archiveArray);
 			
-		Toast.makeText(getBaseContext(), ""+                		   //Toast.makeText(getBaseContext(), "Archive", Toast.LENGTH_SHORT).show();
-todoArray.size(), Toast.LENGTH_SHORT).show();
 		
         //initialize ArrayAdapter
         todoAdapter = new ArrayAdapter<todoItem>(getBaseContext(), android.R.layout.simple_list_item_1, todoArray);
@@ -102,16 +103,24 @@ todoArray.size(), Toast.LENGTH_SHORT).show();
                    // of the selected item
                 	   if(which == 0){
                 		   //Toast.makeText(getBaseContext(), "Archive", Toast.LENGTH_SHORT).show();
+                		   archiveArray.add(todoAdapter.getItem(finalPosition));
                 		   saveInFile(ARCHIVEFILENAME, archiveArray);
+                		   todoArray.remove(finalPosition);
+                		   todoAdapter.notifyDataSetChanged();
+
                 	   }
                 	   else if(which == 1){
+                		   Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                				  "mailto","", null));
+                		emailIntent.putExtra(Intent.EXTRA_SUBJECT, todoAdapter.getItem(finalPosition).toString());
+                		startActivity(Intent.createChooser(emailIntent, "Send email..."));
                 		   
                 	   }
                 	   else if(which == 2){
                 		   todoArray.remove(finalPosition);
                 		   todoAdapter.notifyDataSetChanged();
                 		   updateCrossOuts();
-                		   saveInFile(MAINFILENAME, ToDoArchive.archiveArray);
+                		   saveInFile(MAINFILENAME, todoArray);
 						}
                 	   
                }
@@ -199,6 +208,7 @@ todoArray.size(), Toast.LENGTH_SHORT).show();
     		BufferedReader in = new BufferedReader(new InputStreamReader(fis));			
     		//From http://www.javacreed.com/simple-gson-example/
     		Gson gson = new Gson();
+    		
     		Type ListType = new TypeToken<ArrayList<todoItem>>() {}.getType();
     		todoArray = gson.fromJson(in, ListType);
     	} catch (FileNotFoundException e) {

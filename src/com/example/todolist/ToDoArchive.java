@@ -40,7 +40,7 @@ public class ToDoArchive extends Activity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_to_do_archive);
         
-		//loadFromFile(ARCHIVEFILENAME, archiveArray);
+		loadFromFile(ARCHIVEFILENAME, archiveArray);
 		
         //initialize ArrayAdapter
         todoAdapter = new ArrayAdapter<todoItem>(getBaseContext(), android.R.layout.simple_list_item_1, archiveArray);
@@ -67,13 +67,15 @@ public class ToDoArchive extends Activity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final int finalPosition = position;
         builder.setTitle("What would you like to do?")
-               .setItems(R.array.dialog_box_string, new DialogInterface.OnClickListener() {
+               .setItems(R.array.archive_dialog, new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int which) {
                    // The 'which' argument contains the index position
                    // of the selected item
                 	   if(which == 0){
                 		   //Toast.makeText(getBaseContext(), "Archive", Toast.LENGTH_SHORT).show();
-                		   saveInFile(ARCHIVEFILENAME, archiveArray);
+                		   saveInFile(MAINFILENAME, MainActivity.todoArray);
+                		   archiveArray.remove(finalPosition);
+                		   todoAdapter.notifyDataSetChanged();
                 	   }
                 	   else if(which == 1){
                 		   
@@ -82,7 +84,8 @@ public class ToDoArchive extends Activity {
                 		   archiveArray.remove(finalPosition);
                 		   todoAdapter.notifyDataSetChanged();
                 		   updateCrossOuts();
-                		   saveInFile(MAINFILENAME, ToDoArchive.archiveArray);
+                		   todoAdapter.notifyDataSetChanged();
+                		   saveInFile(ARCHIVEFILENAME, ToDoArchive.archiveArray);
 						}
                 	   
                }

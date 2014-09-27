@@ -9,6 +9,7 @@ package com.example.todolist;
 
 public final class R {
     public static final class array {
+        public static final int archive_dialog=0x7f060001;
         public static final int dialog_box_string=0x7f060000;
     }
     public static final class attr {
